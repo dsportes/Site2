@@ -1,0 +1,76 @@
+{
+    "paths" : {
+        "asn" : "../../asocialui/asocialui/",
+        "svp1" : "../../asocialsrv/asocialsrv/",
+        "svn1" : "../../node1/node1/"
+    },
+    "urls" : {
+      "u1a" : "https://localhost",
+      "u1b" : "http://localhost:8091",
+      "us2" : "https://localhost:8443",
+      "un1" : "https://test.sportes.fr:8443",
+      "lh" : "127.0.0.1",
+      "lh2" : "http://localhost:8080",
+      "polymerserve" : "http://127.0.0.1:8081",
+      "h1" : "localhost",
+      "h1b" : "192.168.1.10",
+      "h2" : "test.sportes.fr",
+      "h3" : "127.0.0.1:8000",
+      "h4" : "127.0.0.1:8081",
+      "h5" : "127.0.0.1:80",     
+      "n1a" : "127.0.0.1:8091",     
+      "n1b" : "127.0.0.1:8092"      
+    },
+    "origins" : [
+        ["lo1", "h1", "h2", "h3"], 
+        ["lo2", "lo1", "h4", "h5"] 
+    ],
+    "orgs" : [
+        ["prods", "ds", "uto"], 
+        ["demos", "dsdemo", "utodemo"], 
+        ["tests", "dstest", "utotest"] 
+    ],
+	"options" : {
+		"opt1" : {"rien":0},
+		"optasn" : {
+			"shortcuts":{"?":"ds-index", "demo":"dsdemo-index"},
+			"homes":["index", "admin"]
+		},
+		"DELHISTORYINDAYS" : 20,
+	    "QUEUES" : [4, 1, 1],
+	    "logPy" : 1
+	},
+    "apps" : {
+        "asn" : {
+        	"url" : "u1b", "syntax":"s1", 
+            "builds" : [123, 125], "debug" : 125, "builddir" : "build/", 
+            "staticUrl" : "polymerserve",
+            "options" : "opt1",
+            "services" : [
+                {"svc":"svn1", "build":100, "url":"n1a", "orgs":"prods"}, 
+                {"svc":"svn1", "build":100, "url":"n1b", "orgs":"demos"}
+            ] 
+        }
+    },
+    "databases" : {
+        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5433, "max":10, "provider":"pgdb"},
+        "db2" : {"host":"lh", "database":"asocial1", "user":"asocial", "connectionLimit ":10, "provider":"mariadbdb"}
+    },
+    "services" : {
+        "svn1": {"builds":[100], "buildsmin":[100], "debug":100, "builddir":"build/", "options":"opt1" },
+        "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1" }
+    },
+    "processus" : {
+        "N1" : {"listen":["h1", 8443, 8091], "db":"db1", "static":true,
+            "services" : [
+                {"svc":"svn1", "build":0, "origins":"lo1", "orgs":"prods"}, 
+                {"svc":"svn1", "build":0, "origins":"lo1", "orgs":"demos"} 
+            ]
+        },
+        "P1" : {"listen":["h1", 0, 80], "db":"db2", 
+            "services" : [
+                {"svc":"svp1", "build":0, "origins":"lo1", "orgs":"tests"}
+            ]
+        }
+    }
+}
