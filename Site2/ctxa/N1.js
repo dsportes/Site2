@@ -147,7 +147,7 @@ if (cfg.currentProcessus.static) {
 
 /**** scripts Service Workers des applications ****/
 for(let ax in cfg.apps) {
-	app.use(cfg.apps[ax].prefix + "[\$]S/" + ax + "/", (req, res) => {
+	app.use(cfg.apps[ax].prefix + "[\$]S/" + ax + ".js", (req, res) => {
 		try {
 			let i = req.originalUrl.indexOf("/$S/");
 			let x = req.originalUrl.substring(i + 4);

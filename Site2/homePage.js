@@ -3,8 +3,10 @@ class HomePage {
 		if (typeof appjs === "string" || appjs instanceof String)  {
 			let str = appjs.replace(/''/g, "'");
 			this.appCfg = JSON.parse(appjs);
+			this.maker = 1;
 		} else
 			this.appCfg = appjs;
+		this.maker = 0;
 	}
 
 	/*
@@ -30,7 +32,11 @@ class HomePage {
 
 	s1(path, qs){
 		qs.app = this.appCfg.name;
+		qs.maker = this.maker;
+		if (qs.build && !Number.isInteger(qs.build))
+			qs.build = parseInt(qs.build, 10);
 		qs.b = qs.build && this.appCfg.builds.indexOf(qs.build) != -1 ? qs.build : this.appCfg.builds[0];
+		qs.builds = this.appCfg.builds;
 		
 		let i = path.lastIndexOf("/");
 		const home1 = i == -1 ? path : path.substring(i + 1);
@@ -49,6 +55,7 @@ class HomePage {
 			else 
 				mode = 1;				
 		}
+		qs.mode = mode;
 		
 		let shortcuts = this.appCfg.options && this.appCfg.options.shortcuts ? this.appCfg.options.shortcuts : {};
 		let orgHome = home2;
@@ -67,8 +74,10 @@ class HomePage {
 		let homes = this.appCfg.options && this.appCfg.options.homes ? this.appCfg.options.homes : [];
 		if (!homes.length) homes.push("index");
 		if (homes.indexOf(qs.home) == -1) qs.home = homes[0];
+		
 		qs.svc = this.servicesOfOrgInApp(this.appCfg, qs.org);
 		if (!qs.svc) return null;
+		
 		let u = this.appCfg.staticUrl && this.appCfg.debug == qs.b ? this.appCfg.staticUrl : this.appCfg.url + "$R/" + qs.app + "/" + qs.b ;
 		let qj = encodeURIComponent(JSON.stringify(qs));
 		return u + "/" + qs.home + ".html?" + qj;

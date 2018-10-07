@@ -101,6 +101,7 @@ class Config {
 
 				let dbg = x.debug ? x.debug : 0;
 				let bd = x.builddir ? x.builddir : "/";
+				v.debug = dbg;
 				v.builds = x.builds ? x.builds : [];
 				v.buildspaths = new Array(v.builds.length);
 				for(let i = 0; i < x.builds.length; i++){

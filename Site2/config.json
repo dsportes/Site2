@@ -26,9 +26,9 @@
         ["lo2", "lo1", "h4", "h5"] 
     ],
     "orgs" : [
-        ["prods", "ds", "uto"], 
-        ["demos", "dsdemo", "utodemo"], 
-        ["tests", "dstest", "utotest"] 
+        ["prods", "ds", "grp"], 
+        ["demos", "dsdemo", "grpdemo"], 
+        ["tests", "dstest", "grptest"] 
     ],
 	"options" : {
 		"opt1" : {"rien":0},
