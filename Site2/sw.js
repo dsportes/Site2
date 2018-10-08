@@ -1,85 +1,33 @@
+const cfg = new Cfg(appConfigJson);
+const build = cfg.builds[0];
+const cachename = "B" + build;
 
-
-/*******************************************************
-const shortcuts = {"?": "prod-index", "index2": "prod-index2", "index": "prod-index", "d": "demo-index", "admin": "prod-index2"};
-const inb = 4; 
-const uib = [11];
-const cp = "tsw"; 
-const dyn_appstore = "https://127.0.0.1/cp/"
-const static_appstore = "https://127.0.0.1/cp/$ui/"
-
-//const CP = cp ? '/' + cp + '/' : '/'; 
-//const CPOP = CP + '$op/'; 
-//const CPUI = CP + '$ui/'; 
-//const BC = inb + '.' + uib[0]; 
-//const x = CPUI + BC +'/';
-const lres = [
-	x + "helper.js",
-	x + "home.html",
-	x + "favicon.ico"
-];
-*/
-
-const CP = cp ? '/' + cp + '/' : '/'; 
-const CPOP = CP + '$op/'; 
-const CPUI = CP + '$ui/'; 
-const BC = inb + '.' + uib[0]; 
-
-const CACHENAME =  (cp ? cp : "root") + "_" + BC;	
-const TRACEON = true;	// trace sur erreurs
-const TRACEON2 = false; // trace sur actions normales
-const VCACHES = { }
-const BUILDS = { }
 const TIME_OUT_MS = 30000;
 const encoder = new TextEncoder("utf-8");
 
-let installReport = "?";
-let mycaches = []
-
-for(let i = 0, b = 0; b = uib[i]; i++) {
-	VCACHES[(cp ? cp : "root") + "_" + inb + "." + b] = true;
-	BUILDS[inb + "." + b] = true;
-}
-
-// installation des ressources requises pour la build BC
-this.addEventListener('install', function(event) {
-	if (TRACEON) console.log("Install de " + BC);
+this.addEventListener('install', event => {
+	this.skipWaiting();
 	event.waitUntil(
-		caches.open(CACHENAME)
-		.then(cache => {
-			if (TRACEON2) console.log("Install addAll demandé ... " + BC + " - " + lres.length + " resources");
-			const res = cache.addAll(lres);
-			installReport = "Install addAll OK " + BC + " - " + lres.length + " resources";
-			if (TRACEON2) console.log(installReport);
-			return res;
-		}).catch(error => {
-			// Une des URLs citées est NOT FOUND, on ne sait pas laquelle
-			installreport = "Install addAll KO " + BC + " - " + error.message;
-			if (TRACEON) console.log(installReport);
-		})
+		caches.open(cachename).then(cache => cache.addAll(files))
 	);
 });
 
-// Suppression des caches obsolètes lors d'une activation
-this.addEventListener('activate', function(event) {
+this.addEventListener('activate', event => {
 	event.waitUntil(
-		caches.keys()
-		.then(cacheNames => {
-				if (TRACEON) console.log("Suppression des caches obsolètes sur activation de " + BC);
-				return Promise.all(
-					cacheNames.map(cacheName => {
-						if (!VCACHES[cacheName]) {
-							if (TRACEON) console.log("Suppression de " + cacheName);
-							return caches.delete(cacheName);
-						} else
-							mycaches.push(cacheName);			
-					})
-				);
-		}).catch(error => {
-			if (TRACEON) console.log("ERREUR sur suppression des caches obsolètes sur activation de " + BC + " - " + error.message);
-		})
+		clients.claim();
+	    caches.keys().then(keys => Promise.all(
+	    	keys.map(key => {
+	    		if (key != cachename) {
+	    			return caches.delete(key);
+	    		}
+	    	});
+	    )).then(() => {
+	    	console.log(cachename + ' now ready to handle fetches!');
+	    })
 	);
 });
+
+
 
 const nf404 = function(m, u) {
 	let txt = encoder.encode(m + " : " + u);
@@ -90,33 +38,6 @@ const nf404 = function(m, u) {
 	return new Response(txt, {status:404, statusText:"Not Found", headers:headers});
 }
 
-const infoSW = function() {
-	let txt = encoder.encode(JSON.stringify({inb:inb, uib:uib}));
-	const headers = new Headers();
-	headers.append("Content-Type", "text/plain");
-	headers.append("Cache-control", "no-store");
-	headers.append("Content-Length", "" + txt.length);
-	return new Response(txt, {status:200, statusText:"OK", headers:headers});
-}
-
-const myCaches = async function() {
-	let cache = await caches.open(CACHENAME);
-	let keys = await cache.keys();
-	let lst = [];
-	lst.push("mycaches: " + mycaches.join("  "));
-	lst.push("installReport: " + installReport);
-	lst.push("keys: " + keys.length);
-	for(let i = 0; i < keys.length; i++) {
-		let req= keys[i]
-		lst.push(req.url);
-	}
-	let txt = encoder.encode(lst.join("\n"));
-	const headers = new Headers();
-	headers.append("Content-Type", "text/plain");
-	headers.append("Cache-control", "no-store");
-	headers.append("Content-Length", "" + txt.length);
-	return new Response(txt, {status:200, statusText:"OK", headers:headers});
-}
 
 const fetchTO = async function(req, timeout) {
 	let resp;
@@ -135,11 +56,6 @@ const fetchTO = async function(req, timeout) {
 		resp = await fetch(timeout ? req.url : req, {signal});
 		if (timeout && tim) 
 			clearTimeout(tim);
-		if (resp && resp.ok) {
-			if (TRACEON2) console.log("fetch OK du serveur : " + req.url);
-		} else {
-			if (TRACEON) console.log("fetch KO du serveur : " + req.url);
-		}
 		return resp;
 	} catch (e) {
 		if (timeout)
@@ -174,19 +90,6 @@ const fetchFromCaches = async function(req, build) {
 	return resp;
 }
 
-//recherche dans la cache de build : si toCache recherche au serveur et garde la réponse en cache de la build citée
-const fetchFromCache = async function(req, build, toCache) {
-	let cachename = (cp ? cp : "root") + "_" + build;
-	let cache = await caches.open(cachename);
-	let resp = await cache.match(req.url, {ignoreSearch:true, ignoreMethod:true, ignoreVary:true});
-	if ((resp && resp.ok) || !toCache) 
-		return resp;		
-	resp = await fetchTO(req.clone(), TIME_OUT_MS);
-	if (!resp || !resp.ok)
-		return resp;
-	await cache.put(req.clone, resp.clone());
-	return resp;
-}
 
 const fetchHome = async function(org, home, build, mode, qs){
     let x = "$build=" + BC + "&$org=" + org + "&$home=" + home + "&$mode=" + mode + "&$cp=" + cp + "&$appstore=" + dyn_appstore + "&$maker=Service-Worker"  
@@ -198,6 +101,53 @@ const fetchHome = async function(org, home, build, mode, qs){
 	headers.append("Content-Length", "" + txt.length);
 	return new Response(txt, {status:200, statusText:"OK", headers:headers});
 }
+
+this.addEventListener('fetch', async event => {
+	let url = event.request.url;
+	let i = url.indexOf("//");
+	let j = url.indexOf("/", i + 2);
+	// ce qui suit le site AVEC /
+	let p = j != -1 ? (j == url.length - 1 ? "/" : url.substring(j);) : "/";
+	i = p.indexOf("?");
+	let path = i == -1 ? p : p.substring(0,i);
+	let qs = i == -1 ? "" : p.substring(i);
+	
+	i = path.indexOf("/$O/");
+	if (i != -1) {
+		event.respondWith(fetch(event.request));
+		return;
+	}
+	
+	i = path.indexOf("/$S/");
+	if (i != -1) {
+		event.respondWith(fetchTO(event.request, TIME_OUT_MS));
+		return;
+	}
+	
+	i = path.indexOf("/$R/");
+	if (i != -1) {
+		let b = 0;
+		try {
+			j = path.indexOf("/", i + 1);
+			i = path.indexOf("/", j + 1);
+			b = parseInt(path.substring(j+1, i))
+		} catch(e)
+		if (b == build) {
+			let cache = await caches.open(cachename);
+			event.respondWith(cache.match(req.url, {ignoreSearch:true, ignoreMethod:true, ignoreVary:true}));
+		} else
+			event.respondWith(fetchTO(event.request, TIME_OUT_MS));
+		return;
+	}
+	
+	let [mode, redir] = new HomePage(a).getHome(req.path, req.query);
+	if (mode == 2){
+		// redirect local
+	} else {
+		event.respondWith(fetchTO(event.request, TIME_OUT_MS));
+	}
+});
+
 
 this.addEventListener('fetch', event => {
 	let now = new Date().toISOString();
@@ -265,63 +215,3 @@ this.addEventListener('fetch', event => {
 	
 	event.respondWith(nf404("Syntaxe URL non reconnue", url));
 });
-
-const analyseHome = function(home1, qs, shortcuts) {
-	let i, home, org, mode, build;
-	
-	let home2;
-	i = home1.lastIndexOf(".");
-	if (i == -1) {
-		mode = 1;
-		home2 = home1;
-	} else {
-		let ext = home1.substring(i + 1);
-		home2 = home1.substring(0, i);
-		if (ext.startsWith("a")) 
-			mode = 2;
-		else if (ext.startsWith("i") || ext == "html")
-			mode = 0;
-		else 
-			mode = 1;				
-	}
-
-	let orgHome = home2;
-	if (!home2)
-		orgHome = shortcuts["?"];
-	else {
-		i = home2.indexOf("-");
-		if (i == -1) {
-			let x = shortcuts[home2];
-			orgHome = x ? x : home2 + "-index";
-		}
-	}
-	i = orgHome.indexOf("-");
-	org = orgHome.substring(0, i);
-	home = orgHome.substring(i + 1);
-	
-	let breq = null;
-	if (qs) {
-	    i = qs.indexOf("build=");
-	    if (i != -1) {
-	        let j = qs.indexOf("&", i + 6);
-	        x = j == -1 ? qs.substring(i + 6, j) : qs.substring(i + 6);
-	        if (x) {
-	            let y = x.split(".");
-	            try {
-	            	breq = [0, 0, 0];
-	                breq[0] = y.length > 1 ? y[0] : 0;
-	    	        breq[1] = y.length >= 2 ? y[1] : 0;
-	    	        breq[0] = y.length >= 3 ? y[2] : 0;
-	                if (breq[0] < 1 || breq[1] < 0 || breq[2] < 0)
-	                    breq = null
-	            } catch (e) {
-	            	breq = null;
-	            }
-	        }
-	    }
-	}
-	build = "" + inb + "." + (breq ? breq[1] : uib[0])
-	return {home:home, org:org, mode:mode, build:build}
-}
-
-

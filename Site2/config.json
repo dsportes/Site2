@@ -8,7 +8,7 @@
       "u1a" : "https://localhost",
       "u1b" : "http://localhost:8091",
       "us2" : "https://localhost:8443",
-      "un1" : "https://test.sportes.fr:8443",
+      "un1" : "https://test.sportes.fr:8491",
       "lh" : "127.0.0.1",
       "lh2" : "http://localhost:8080",
       "polymerserve" : "http://127.0.0.1:8081",
@@ -42,7 +42,7 @@
 	},
     "apps" : {
         "asn" : {
-        	"url" : "u1b", "syntax":"s1", 
+        	"url" : "un1", "syntax":"s1", 
             "builds" : [123, 125], "debug" : 125, "builddir" : "build/", 
             "staticUrl" : "polymerserve",
             "options" : "opt1",
@@ -61,7 +61,7 @@
         "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1" }
     },
     "processus" : {
-        "N1" : {"listen":["h1", 8443, 8091], "db":"db1", "static":true,
+        "N1" : {"listen":["h1", 8491, 8091], "db":"db1", "static":true,
             "services" : [
                 {"svc":"svn1", "build":0, "origins":"lo1", "orgs":"prods"}, 
                 {"svc":"svn1", "build":0, "origins":"lo1", "orgs":"demos"} 

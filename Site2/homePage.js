@@ -80,7 +80,7 @@ class HomePage {
 		
 		let u = this.appCfg.staticUrl && this.appCfg.debug == qs.b ? this.appCfg.staticUrl : this.appCfg.url + "$R/" + qs.app + "/" + qs.b ;
 		let qj = encodeURIComponent(JSON.stringify(qs));
-		return u + "/" + qs.home + ".html?" + qj;
+		return [mode, u + "/" + qs.home + ".html?" + qj];
 	}
 	
 	servicesOfOrgInApp(app, org) {

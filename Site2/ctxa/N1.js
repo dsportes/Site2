@@ -170,7 +170,7 @@ app.use("/", (req, res) => {
 		for(let ax in cfg.apps) {
 			let a = cfg.apps[ax];
 			if (a.hostname == req.hostname && req.path.startsWith(a.prefix)) {
-				let redir = new HomePage(a).getHome(req.path, req.query);
+				let [mode, redir] = new HomePage(a).getHome(req.path, req.query);
 				if (redir) {
 					console.log(req.path + " ==redir==> " + decodeURIComponent(redir));
 				    res.redirect(redir);
