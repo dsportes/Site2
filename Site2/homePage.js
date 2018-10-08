@@ -4,9 +4,10 @@ class HomePage {
 			let str = appjs.replace(/''/g, "'");
 			this.appCfg = JSON.parse(appjs);
 			this.maker = 1;
-		} else
+		} else {
 			this.appCfg = appjs;
-		this.maker = 0;
+			this.maker = 0;
+		}
 	}
 
 	/*
@@ -76,7 +77,7 @@ class HomePage {
 		if (homes.indexOf(qs.home) == -1) qs.home = homes[0];
 		
 		qs.svc = this.servicesOfOrgInApp(this.appCfg, qs.org);
-		if (!qs.svc) return null;
+		if (!qs.svc) return [mode, null];
 		
 		let u = this.appCfg.staticUrl && this.appCfg.debug == qs.b ? this.appCfg.staticUrl : this.appCfg.url + "$R/" + qs.app + "/" + qs.b ;
 		let qj = encodeURIComponent(JSON.stringify(qs));
@@ -87,7 +88,7 @@ class HomePage {
 		let res = {};
 		let ok = false;
 		for(let i = 0, s = null; s = app.services[i]; i++)
-			if (s.orgs.has(org)) {
+			if (s.orgs[org]) {
 				res[s.svc] = {url:s.url, build:s.build};
 				ok = true;
 			}
@@ -111,5 +112,5 @@ class HomePage {
 		return qs;
 	}
 }
-	
-if (!(typeof exports === undefined)) exports.HomePage = HomePage;
+
+try { exports.HomePage = HomePage; } catch(e) {}

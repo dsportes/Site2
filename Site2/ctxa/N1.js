@@ -27,8 +27,8 @@ function getFilesByApp() {
 
 function swjsByApp(app) {
 	let sep = "\n/***********************************/\n";
-	let appcfg = "const appConfigJson = '" + cfg.serial(app) + "';"
-	return filesByApp[app] + sep + appcfg + sep + swjs +  sep + homepagejs; 
+	let appcfg = "const appConfigJson = '" + cfg.serial(cfg.apps[app]) + "';"
+	return filesByApp[app] + sep + homepagejs + sep + appcfg + sep + swjs; 
 }
 
 function requireOpModules(){
@@ -79,10 +79,6 @@ const filesByApp = getFilesByApp();
 const opModules = requireOpModules();
 
 const app = express();
-
-function toto() {
-	
-}
 
 /**** appels des opérations des services    ****/
 app.use("/[\$]O/", async (req, res) => {
@@ -151,12 +147,15 @@ for(let ax in cfg.apps) {
 		try {
 			let i = req.originalUrl.indexOf("/$S/");
 			let x = req.originalUrl.substring(i + 4);
-			let axx = x.substring(0, x.length -1);
+			let axx = x.substring(0, x.length - 3);
 			let text = swjsByApp(axx);
 			if (!text)
 				res.status(404).send("application ???");
 			else
-				res.status(200).set("Content-type",  "text/javascript; charset=utf-8").send(text);
+				res.status(200).set({
+					"Content-type": "text/javascript; charset=utf-8",
+					"Service-Worker-Allowed": "/"
+				}).send(text);
 		} catch(e) { 
 			res.status(404).send(e.message);
 		}

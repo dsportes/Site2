@@ -142,12 +142,12 @@ class Config {
 					if (!it1.orgs) return this.err("apps." + app + " : no orgs for item " + i);
 					let og = this.orgs[it1.orgs];
 					if (!og) return this.err("apps." + app + " : no orgs for item " + i);
-					it2.orgs = og;
-					for(let org of it2.orgs){
+					it2.orgs = {};
+					for(let org of og){
 						if (orgs.has(org)) 
 							return this.err("apps." + app + " : org " + org + " duplicate for svc " + svc + " for item " + i);
-						else
-							orgs.add(org);
+						orgs.add(org);
+						it2.orgs[org] = true;
 					}
 				}
 			}
@@ -264,8 +264,8 @@ class Config {
 					if (!og) return this.err("process." + proc + " : no orgs for item " + i);
 					it2.orgs = og;
 					for(let org of it2.orgs){
-						if 
-							(orgs[org]) return this.err("process." + proc + " : org " + org + " duplicate for svc " + it1.svc + " for item " + i);
+						if (orgs[org]) 
+							return this.err("process." + proc + " : org " + org + " duplicate for svc " + it1.svc + " for item " + i);
 						else
 							orgs[org] = it2.build;
 					}
