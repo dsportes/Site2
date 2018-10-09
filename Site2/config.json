@@ -38,7 +38,9 @@
 		},
 		"DELHISTORYINDAYS" : 20,
 	    "QUEUES" : [4, 1, 1],
-	    "logPy" : 1
+	    "ISDEV" : true,
+	    "logP1" : 1,
+	    "logN1" : 1
 	},
     "apps" : {
         "asn" : {
@@ -61,10 +63,10 @@
         "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1" }
     },
     "processus" : {
-        "N1" : {"listen":["h1", 8491, 8091], "db":"db1", "static":true,
+        "N1" : {"listen":["h1", 8491, 8091], "static":true,
             "services" : [
-                {"svc":"svn1", "build":0, "origins":"lo1", "orgs":"prods"}, 
-                {"svc":"svn1", "build":0, "origins":"lo1", "orgs":"demos"} 
+                {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"prods"}, 
+                {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"demos"} 
             ]
         },
         "P1" : {"listen":["h1", 0, 80], "db":"db2", 
@@ -72,5 +74,29 @@
                 {"svc":"svp1", "build":0, "origins":"lo1", "orgs":"tests"}
             ]
         }
+    },
+    "types" : {
+	    "html":"text/html",
+	    "htm":"text/html",
+	    "ahtm":"text/html",
+	    "ihtm":"text/html",
+	    "a":"text/html",
+	    "css":"text/css",
+	    "json":"application/json",
+	    "js":"text/javascript",
+	    "md":"text/markdown",
+	    "txt":"text/plain",
+	    "xml":"application/xml",
+	    "appcache":"text/cache-manifest",
+	    "pem":"application/x-pem-file",
+	    "woff":"application/font-woff",
+	    "woff2":"application/font-woff2",
+	    "svg":"image/svg+xml",
+	    "gif":"image/gif",
+	    "ico":"image/x-icon",
+	    "png":"image/png",
+	    "jpg":"image/jpeg",
+	    "jpeg":"image/jpeg"
     }
+    
 }

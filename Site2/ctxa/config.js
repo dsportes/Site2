@@ -233,11 +233,6 @@ class Config {
 					} else
 						v.port = 0;
 				}
-				if (x.db) {
-					let db = this.databases[x.db];
-					if (!db) return this.err("processus." + proc + " : no db");
-					v.db = db;
-				}
 				if (x.static && v.type == 0) v.static = true;
 				
 				v.services = new Array(x.services ? x.services.length : 0);
@@ -249,12 +244,18 @@ class Config {
 					if (!it1.svc) return this.err("processus." + proc + " : no svc for item " + i);
 					let svx = this.services[it1.svc];
 					if (!svx) return this.err("processus." + proc + " : no valid svc for item " + i);
+					it2.svc = svx;
+					if (it1.db) {
+						let db = this.databases[it1.db];
+						if (!db) return this.err("processus." + proc + " : no db for item " + i);
+						it2.db = db;
+					}
 					if (!v.svorgs[it1.svc]) v.svorgs[it1.svc] = {};
 					let orgs = v.svorgs[it1.svc];
-					it2.svc = svx;
 					if (it1.build === undefined || !Number.isInteger(it1.build) || it1.build < 0 || it1.build >= svx.builds.length) 
 						return this.err("processus." + proc + " : no build for item " + i);
 					it2.build = svx.builds[it1.build];
+					it2.buildmin = svx.buildsmin[it1.build];
 					if (!it1.origins) return this.err("processus." + proc + " : no origins for item " + i);
 					let orig = this.origins[it1.origins];
 					if (!orig) return this.err("processus." + proc + " : no valid origins for item " + i);
@@ -273,16 +274,44 @@ class Config {
 				if (v.type == 1 && v.services.length > 1) 
 					return this.err("processus." + proc + " : type Python and multiple services");
 			}
+		this.types = c.types ? c.types : {};
 		let cp = this.processus[this.currentProcessus];
 		if (!cp) return this.err("processus." + this.currentProcessus + " : current process unknown");
-		this.currentProcessus = cp;	
+		this.currentProcessus = cp;
+		this.logLevel = this.options["log" + this.currentProcessus.name];
+		if (this.logLevel) logLevel = 0;
 		return this;
 	}
 	
+	mimeOf(code) {
+	    if (!code) return "application/octet-stream";
+	    if (code.indexOf("/") != -1) return code;
+	    let t = this.types[code];
+	    return t ? t : "application/octet-stream";
+	}
+
 	serial(app) {
 		return JSON.stringify(app).replace(/'/g, "''");
 	}
-
+	
+	buildOfSvcForOrg(svc, org, origin){
+		for(let k = 0, s = null; s = this.currentProcessus.services[k]; k++) {
+			if (!s.orgs.has(org)) continue;
+			return (s.origins.has(origin) ? [0, s] : [1, ""];
+		}
+		for(let proc in this.processus) {
+			let p = this.processus[proc];
+			for(let i = 0, s = null: s = p.services[i]; i++) {
+				if (s.orgs[org]) {
+					let url = if (p.sslport) "https://" + p.ip + ":" + p.sslport + "/" 
+						: "http://" + p.ip + ":" + p.port + "/";
+					return [2, url]
+				}
+			}
+		}
+		return [3, ""];
+	}
+		
 	/*
 	buildFrom(proc, svc, org){
 		return proc && svc && org && proc[svc.name] ? proc[svc.name][org] : 0;
