@@ -230,7 +230,11 @@ app.use("/", (req, res) => {
 				let [mode, redir] = new HomePage(a).getHome(req.path, req.query);
 				if (redir) {
 					console.log(req.path + " ==redir==> " + decodeURIComponent(redir));
-				    res.redirect(redir);
+					let text = "<html><head><meta http-equiv='refresh' content='0;URL=" + redir + "'></head><body></body></html>";
+					res.status(200).set({
+						"Content-type": "text/html",
+						"Cache-control": "no-cache, no-store, must-revalidate"
+					}).send(text);
 				    ok = true;
 				    break;
 				}
