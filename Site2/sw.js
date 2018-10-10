@@ -74,7 +74,12 @@ this.addEventListener('fetch', async event => {
 		event.respondWith(fetch(event.request));
 		return;
 	}
-	
+
+	if (path.endsWith("/ping")) {
+		event.respondWith(fetch(event.request));
+		return;
+	}
+
 	i = path.indexOf("/$S/");
 	if (i != -1) {
 		event.respondWith(fetchTO(url, TIME_OUT_MS));
@@ -106,6 +111,6 @@ this.addEventListener('fetch', async event => {
 		else
 			event.respondWith(nf404("cannot identify home page : " + url));
 	} else {
-		event.respondWith(fetchTO(event.request, TIME_OUT_MS));
+		event.respondWith(fetchTO(url, TIME_OUT_MS));
 	}
 });

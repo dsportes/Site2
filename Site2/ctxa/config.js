@@ -205,6 +205,7 @@ class Config {
 					if (!op) return this.err("services." + svc + " : no options");
 					v.options = op;
 				}
+				v.langs = x.langs && x.langs.length ? x.langs : ["fr"];
 			}
 		
 		this.processus = {};
@@ -297,13 +298,13 @@ class Config {
 	buildOfSvcForOrg(svc, org, origin){
 		for(let k = 0, s = null; s = this.currentProcessus.services[k]; k++) {
 			if (!s.orgs.has(org)) continue;
-			return (s.origins.has(origin) ? [0, s] : [1, ""];
+			return s.origins.has(origin) ? [0, s] : [1, ""];
 		}
 		for(let proc in this.processus) {
 			let p = this.processus[proc];
-			for(let i = 0, s = null: s = p.services[i]; i++) {
+			for(let i = 0, s = null; s = p.services[i]; i++) {
 				if (s.orgs[org]) {
-					let url = if (p.sslport) "https://" + p.ip + ":" + p.sslport + "/" 
+					let url = p.sslport ? "https://" + p.ip + ":" + p.sslport + "/" 
 						: "http://" + p.ip + ":" + p.port + "/";
 					return [2, url]
 				}

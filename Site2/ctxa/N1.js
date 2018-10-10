@@ -82,13 +82,13 @@ async function oper(req, res) {
 			} else {
 				// Build min dans XCH non respectée ou pas de XCH
 				let err = {err:"BBM", info:"BBM", args:buildmin, phase:0};
-				res.status(200).set(headers("text/javascript", origin).send(JSON.stringify(err));				
+				res.status(200).set(headers("text/javascript", origin)).send(JSON.stringify(err));				
 			}
 		} else {
 			// 1:origine 2:org suppotrtée par autre process 3:org non supportée
 			let c = "BORG"  + err; 
 			let err = {err:c, info:c, args:buildOrUrl, phase:0};
-			res.status(200).set(headers(cfg.mimeOf("js"), origin).send(JSON.stringify(err));
+			res.status(200).set(headers(cfg.mimeOf("js"), origin)).send(JSON.stringify(err));
 		}
 	} catch(e) {
 		let err;
@@ -150,13 +150,12 @@ const homepagejs = fs.readFileSync(rootDir + "/homePage.js");
 
 const configjson = fs.readFileSync(rootDir + "/config.json");
 const cfg = new Config().setup(configjson, secretsjson, processusName, rootDir);
-exports.cfg = cfg;
 if (cfg.error) {
 	console.log(cfg.error);
 	throw cfg.error;
 }
-const logLvl = cfg.options["log" + processusName];
-if (logLvl) logLvl = 0;
+let logLvl = cfg.options["log" + processusName];
+if (!logLvl) logLvl = 0;
 
 const filesByApp = getFilesByApp();
 const opModules = requireOpModules();
@@ -164,7 +163,7 @@ const opModules = requireOpModules();
 const app = express();
 
 /**** appels des opérations des services    ****/
-app.use("/[\$]O/", async (req, res) => { await oper(req, res); }
+app.use("/[\$]O/", async (req, res) => { await oper(req, res); });
 
 /**** favicon.ico du sites ****/
 app.use("/favicon.ico", (req, res) => {

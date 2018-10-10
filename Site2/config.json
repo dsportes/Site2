@@ -55,12 +55,14 @@
         }
     },
     "databases" : {
-        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5433, "max":10, "provider":"pgdb"},
-        "db2" : {"host":"lh", "database":"asocial1", "user":"asocial", "connectionLimit ":10, "provider":"mariadbdb"}
+        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5433, 
+        	"max":10, "provider":"pgdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000},
+        "db2" : {"host":"lh", "database":"asocial1", "user":"asocial", 
+        	"connectionLimit ":10, "provider":"mariadbdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000}
     },
     "services" : {
-        "svn1": {"builds":[100], "buildsmin":[100], "debug":100, "builddir":"build/", "options":"opt1" },
-        "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1" }
+        "svn1": {"builds":[100], "buildsmin":[100], "debug":100, "builddir":"build/", "options":"opt1", "langs":["fr","en"] },
+        "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1", "langs":["fr","en"] }
     },
     "processus" : {
         "N1" : {"listen":["h1", 8491, 8091], "static":true,
