@@ -56,6 +56,13 @@ function headers(mime, origin, xch) {
     return h;
 }
 
+const errMsg = {
+	"BORG1":"origne de l'opération non acceptée",
+	"BORG2":"organisation gérée par un autre processus pour le service demandé",
+	"BORG3":"organisation non gérée pour le service demandé",
+	"BMIN":"Build supportée par l'application [{0}] pour ce service absente du X-Custom-Header ou de niveau insuffisant, [{1}] requis au minimum"
+}
+
 async function oper(req, res) {
 	let execCtx;
 	try {
@@ -81,13 +88,13 @@ async function oper(req, res) {
 				res.status(200).set(headers(result.mime, origin, execCtx ? execCtx.respXCH : null)).send(result.bytes);
 			} else {
 				// Build min dans XCH non respectée ou pas de XCH
-				let err = {err:"BBM", info:"BBM", args:buildmin, phase:0};
+				let err = {err:"BBM", info:info:errMsg["BBM"], args:[buildmin, s.buildmin ? s.buildmin : 0], phase:0};
 				res.status(200).set(headers("text/javascript", origin)).send(JSON.stringify(err));				
 			}
 		} else {
-			// 1:origine 2:org suppotrtée par autre process 3:org non supportée
+			// 1:origine 2:org supportée par autre process 3:org non supportée
 			let c = "BORG"  + err; 
-			let err = {err:c, info:c, args:buildOrUrl, phase:0};
+			let err = {err:c, info:errMsg[c], args:buildOrUrl, phase:0};
 			res.status(200).set(headers(cfg.mimeOf("js"), origin)).send(JSON.stringify(err));
 		}
 	} catch(e) {
