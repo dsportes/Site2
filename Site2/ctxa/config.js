@@ -298,7 +298,7 @@ class Config {
 	buildOfSvcForOrg(svc, org, origin){
 		for(let k = 0, s = null; s = this.currentProcessus.services[k]; k++) {
 			if (!s.orgs.has(org)) continue;
-			return s.origins.has(origin) ? [0, s] : [1, ""];
+			return (this.options.ISDEV && origin == "null") || s.orgs.has(origin) ? [0, s] : [1, ""];
 		}
 		for(let proc in this.processus) {
 			let p = this.processus[proc];

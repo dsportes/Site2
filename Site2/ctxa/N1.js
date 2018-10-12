@@ -15,7 +15,7 @@ function getFilesByApp() {
 	const lst = {};
 	for(let ax in cfg.apps) {
 		let a = cfg.apps[ax];
-		let d = a.buildspaths[0];
+		let d = path.normalize(a.buildspaths[0]);
 		let b = a.builds[0];
 		let lx = [];
 		browse(d, lx, a.prefix + "$R/" + ax + "/" + b );
@@ -38,7 +38,8 @@ function requireOpModules(){
 		let id = s.svc.name + "/" + b;
 		if (!r[id]) {
 			let i = s.svc.builds.indexOf(b);
-			r[id] = require(s.svc.buildspaths[i] + "root.js").execCtx;
+			let p = path.normalize(s.svc.buildspaths[i] + "root.js");
+			r[id] = require(p).ExecCtx;
 		}
 	}
 	return r;
@@ -46,8 +47,8 @@ function requireOpModules(){
 
 function headers(mime, origin, xch) {
 	const h = {}
-    h['Content-type'] = mime + "; charset=utf-8";
-    if (origin) {
+    h['Content-type'] = cfg.mimeOf(mime) + "; charset=utf-8";
+    if (origin && origin != "null") {
         h['Access-Control-Allow-Origin'] = origin;
         h['Access-Control-Allow-Headers'] = 'X-Custom-Header';
     }
@@ -65,41 +66,43 @@ const errMsg = {
 
 async function oper(req, res) {
 	let execCtx;
+	let origin;
 	try {
-		let origin = req.headers["origin"];
+		origin = req.headers["origin"];
 		if (req.method == "OPTIONS") {
 			res.status(200).set(headers(cfg.mimeOf("txt"), origin)).send("");
 			return;
 		}
-		let p = req.path.substring(4);
+		let p = req.path.substring(1);
 		let i = p.indexOf("/");
 		let j = p.indexOf("/", i + 1);
 		let svc = p.substring(0, i);
 		let org = p.substring(i + 1, j);
 		let opetc = p.substring(j + 1);
-		let [err, s] = cfg.buildOfSvcForOrg(svc, org, origin);
-		if (!err) {
-			let xch = xch(req);
-			if (xch.build && xch.build >= s.buildmin) {
-				let execCtxClass= opModules(svc + "/" + org);
+		let [e, s] = cfg.buildOfSvcForOrg(svc, org, origin);
+		if (!e) {
+			let xch = getXch(req);
+			let buildmin = xch.build ? xch.build : 0;
+			if (buildmin >= (s.buildmin ? s.buildmin : 0)) {
+				let execCtxClass= opModules[svc + "/" + s.build];
 				execCtx = new execCtxClass(req, cfg, s, org, opetc, xch);
 				let result = await execCtx.go();
 				result.close();
 				res.status(200).set(headers(result.mime, origin, execCtx ? execCtx.respXCH : null)).send(result.bytes);
 			} else {
 				// Build min dans XCH non respectée ou pas de XCH
-				let err = {err:"BBM", info:info:errMsg["BBM"], args:[buildmin, s.buildmin ? s.buildmin : 0], phase:0};
+				let err = {err:"BBM", info:errMsg["BBM"], args:[buildmin, s.buildmin ? s.buildmin : 0], phase:0};
 				res.status(200).set(headers("text/javascript", origin)).send(JSON.stringify(err));				
 			}
 		} else {
 			// 1:origine 2:org supportée par autre process 3:org non supportée
-			let c = "BORG"  + err; 
+			let c = "BORG"  + e; 
 			let err = {err:c, info:errMsg[c], args:buildOrUrl, phase:0};
 			res.status(200).set(headers(cfg.mimeOf("js"), origin)).send(JSON.stringify(err));
 		}
 	} catch(e) {
 		let err;
-		if (err.constructor.name == "AppExc") {
+		if (e.constructor.name == "AppExc") {
 			if (logLvl > 1) console.log(e.message);
 			err = {err:e.err, info:e.message, args:e.args};
 		} else {
@@ -115,15 +118,14 @@ async function oper(req, res) {
 	}
 }
 
-function xch(req) {
+function getXch(req) {
 	let xchjson = req.headers["x-custom-header"];
 	if (!xchjson) {
-		xchjson = req.body["X-Custom-Header"];
-		if (!xchjson) {
-			xchjson = req.query["X-Custom-Header"];
-			if (!xchjson) {};
-		}
+		xchjson = req.body ? req.body["X-Custom-Header"] : null;
+		if (!xchjson)
+			xchjson = req.query ? req.query["X-Custom-Header"] : null;
 	}
+	if (!xchjson) return {};
     try {
         return JSON.parse(xchjson);
     } catch (e) {
@@ -170,7 +172,7 @@ const opModules = requireOpModules();
 const app = express();
 
 /**** appels des opérations des services    ****/
-app.use("/[\$]O/", async (req, res) => { await oper(req, res); });
+app.use("/[\$]O/", upload.any(), bodyParser.urlencoded({ extended: false }), async (req, res) => { await oper(req, res); });
 
 /**** favicon.ico du sites ****/
 app.use("/favicon.ico", (req, res) => {
@@ -198,7 +200,7 @@ if (cfg.currentProcessus.static) {
 		for(let i = 0; i < a.builds.length; i++) {
 			let b = a.builds[i];
 			if (a.debug && a.debug == b && a.staticUrl) continue;
-			let p = a.buildspaths[i];
+			let p = path.normalize(a.buildspaths[i]);
 			let pfx = a.prefix + "[\$]R/" + ax + "/" + b + "/";
 			// console.log("static : " + pfx + "  => " + p);
 			app.use(pfx, serveStatic(p, {fallthrough:false}));

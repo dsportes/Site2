@@ -31,7 +31,7 @@
         ["tests", "dstest", "grptest"] 
     ],
 	"options" : {
-		"opt1" : {"rien":0},
+		"opt1" : {"ignorePause":["base.Ping", "base.SetPause"]},
 		"optasn" : {
 			"shortcuts":{"?":"ds-index", "demo":"dsdemo-index"},
 			"homes":["index", "admin"]
