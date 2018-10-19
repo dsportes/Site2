@@ -216,7 +216,7 @@ class Config {
 					return this.err("processus." + proc + " : duplicate entry");
 				let type = "NP".indexOf(proc.charAt(0))
 				if (type == -1) return this.err("processus." + proc + " : unknown type");
-				let v = {type:type};
+				let v = {type:type, name:proc};
 				this.processus[proc] = v;				
 				if (x.listen) {
 					if (x.listen.length < 1) 
@@ -279,8 +279,8 @@ class Config {
 		let cp = this.processus[this.currentProcessus];
 		if (!cp) return this.err("processus." + this.currentProcessus + " : current process unknown");
 		this.currentProcessus = cp;
-		this.logLevel = this.options["log" + this.currentProcessus.name];
-		if (this.logLevel) logLevel = 0;
+		this.currentProcessus.GCTX = {}
+		this.currentProcessus.GCTX.options = this.options[cp.name] ? this.options[cp.name] : {};
 		return this;
 	}
 	
@@ -298,7 +298,7 @@ class Config {
 	buildOfSvcForOrg(svc, org, origin){
 		for(let k = 0, s = null; s = this.currentProcessus.services[k]; k++) {
 			if (!s.orgs.has(org)) continue;
-			return (this.options.ISDEV && origin == "null") || s.orgs.has(origin) ? [0, s] : [1, ""];
+			return (this.currentProcessus.options.ISDEV && origin == "null") || s.orgs.has(origin) ? [0, s] : [1, ""];
 		}
 		for(let proc in this.processus) {
 			let p = this.processus[proc];

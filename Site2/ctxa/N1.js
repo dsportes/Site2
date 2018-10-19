@@ -31,18 +31,22 @@ function swjsByApp(app) {
 	return filesByApp[app] + sep + homepagejs + sep + appcfg + sep + swjs; 
 }
 
-function requireOpModules(){
-	let r = {};
+function requireRoots(){
+	cfg.currentProcessus.roots = {}
+	let r = cfg.currentProcessus.roots;
+	let q;
 	for(let i = 0, s = null; s = cfg.currentProcessus.services[i]; i++) {
 		let b = s.build;
 		let id = s.svc.name + "/" + b;
 		if (!r[id]) {
-			let i = s.svc.builds.indexOf(b);
-			let p = path.normalize(s.svc.buildspaths[i] + "root.js");
+			let j = s.svc.builds.indexOf(b);
+			let p = path.normalize(s.svc.buildspaths[j] + "root.js");
 			r[id] = require(p).ExecCtx;
+			if (!q)
+				q = require(p).QM;
 		}
 	}
-	return r;
+	return q;
 }
 
 function headers(mime, origin, xch) {
@@ -85,7 +89,7 @@ async function oper(req, res) {
 			let xch = getXch(req);
 			let buildmin = xch.build ? xch.build : 0;
 			if (buildmin >= (s.buildmin ? s.buildmin : 0)) {
-				let execCtxClass= opModules[svc + "/" + s.build];
+				let execCtxClass= cfg.currentProcessus.roots[svc + "/" + s.build];
 				execCtx = new execCtxClass(req, cfg, s, org, opetc, xch, certDN, buildmin);
 				let result = await execCtx.go();
 				result.close();
@@ -188,11 +192,11 @@ if (cfg.error) {
 	console.log(cfg.error);
 	throw cfg.error;
 }
-let logLvl = cfg.options["log" + processusName];
+let logLvl = cfg.currentProcessus.options.log;
 if (!logLvl) logLvl = 0;
 
 const filesByApp = getFilesByApp();
-const opModules = requireOpModules();
+const queueManager = requireRoots();
 
 const app = express();
 
@@ -298,3 +302,7 @@ for(let i = 0, l = null; l = cfg.currentProcessus.listen[i]; i++) {
 		});		
 	}
 }
+
+const qm = new queueManager(cfg);
+await qm.init();
+console.log("QM running");
