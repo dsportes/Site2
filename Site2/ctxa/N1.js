@@ -67,6 +67,7 @@ const errMsg = {
 async function oper(req, res) {
 	let execCtx;
 	let origin;
+	let certDN = getCertDN(req);
 	try {
 		origin = req.headers["origin"];
 		if (req.method == "OPTIONS") {
@@ -85,7 +86,7 @@ async function oper(req, res) {
 			let buildmin = xch.build ? xch.build : 0;
 			if (buildmin >= (s.buildmin ? s.buildmin : 0)) {
 				let execCtxClass= opModules[svc + "/" + s.build];
-				execCtx = new execCtxClass(req, cfg, s, org, opetc, xch);
+				execCtx = new execCtxClass(req, cfg, s, org, opetc, xch, certDN, buildmin);
 				let result = await execCtx.go();
 				result.close();
 				res.status(200).set(headers(result.mime, origin, execCtx ? execCtx.respXCH : null)).send(result.bytes);
@@ -131,6 +132,30 @@ function getXch(req) {
     } catch (e) {
     	return {};
     }
+}
+
+function getCertDN(req) {
+	let sdn = req.headers["ssl_client_s_dn"];
+	if (sdn) {
+		let dn = {}
+		let x = sdn.split(",");
+		for(let i = 0; i < x.length; i++) {
+			let y = x[i];
+			if (y.length >= 3) {
+				let j = y.indexOf("=");
+				if (j > 0 && j < y.length) {
+					let k = y.substring(0,j);
+					let v = y.substring(j+1);
+					dn[k.trim()] = v.trim();
+				}
+			}
+		}
+		return dn;
+	} else if (req.socket.getPeerCertificate) {
+		let cert = req.socket.getPeerCertificate();
+		return cert ? cert.subject : null;
+	} else
+		return null;
 }
 
 const path = require('path');
@@ -232,6 +257,8 @@ for(let ax in cfg.apps) {
 /**** home pages des applications ****/
 app.use("/", (req, res) => {
 	try {
+		let certDN = getCertDN(req);
+		if (certDN) console.log(JSON.stringify(certDN));
 		let ok = false;
 		for(let ax in cfg.apps) {
 			let a = cfg.apps[ax];
@@ -257,15 +284,17 @@ app.use("/", (req, res) => {
 });
 
 /****** starts listen ***************************/
-let ip = cfg.currentProcessus.ip;
-let p1 = cfg.currentProcessus.sslport;
-let p2 = cfg.currentProcessus.port;
-if (p2)
-	http.createServer(app).listen({host:ip, port:p2}, () => {
-		console.log("Server running at " + ip + ":" + p2);
-	});
-if (p1)
-	https.createServer({key:key, cert:cert}, app).listen({host:ip, port:p1}, () => {
-		console.log("Server running at " + ip + ":" + p1);
-	});
+let options1 = {key:key, cert:cert }
+let options2 = {key:key, cert:cert,	requestCert: true, rejectUnauthorized:false }
 
+for(let i = 0, l = null; l = cfg.currentProcessus.listen[i]; i++) {
+	if (!l[2])
+		http.createServer(app).listen({host:l[0], port:l[1]}, () => {
+			console.log("HTTP server running at " + l[0] + ":" + l[1]);
+		});
+	else {
+		https.createServer(l[2] == 1 ? options1 : options2, app).listen({host:l[0], port:l[1]}, () => {
+			console.log("HTTP/S server running at " + l[0] + ":" + l[1]);
+		});		
+	}
+}

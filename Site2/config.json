@@ -31,7 +31,7 @@
         ["tests", "dstest", "grptest"] 
     ],
 	"options" : {
-		"opt1" : {"ignorePause":["base.Ping", "base.SetPause"]},
+		"opt1" : {"ignorePause":["base.Ping", "base.SetPause"], "maxTime":60000},
 		"optasn" : {
 			"shortcuts":{"?":"ds-index", "demo":"dsdemo-index"},
 			"homes":["index", "admin"]
@@ -65,13 +65,13 @@
         "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1", "langs":["fr","en"] }
     },
     "processus" : {
-        "N1" : {"listen":["h1", 8491, 8091], "static":true,
+        "N1" : {"listen":[["h2", 8491, 1], ["h2", 8492, 2], ["h2", 8091]], "static":true,
             "services" : [
                 {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"prods"}, 
                 {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"demos"} 
             ]
         },
-        "P1" : {"listen":["h1", 0, 80], "db":"db2", 
+        "P1" : {"listen":[["h1", 80]], "db":"db2", 
             "services" : [
                 {"svc":"svp1", "build":0, "origins":"lo1", "orgs":"tests"}
             ]

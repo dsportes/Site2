@@ -219,20 +219,20 @@ class Config {
 				let v = {type:type};
 				this.processus[proc] = v;				
 				if (x.listen) {
-					if (x.listen.length < 2 || x.listen.length > 3) 
+					if (x.listen.length < 1) 
 						return this.err("processus." + proc + " : no valid listen");
-					let ip = this.urls[x.listen[0]];
-					if (!ip) return this.err("processus." + proc + " : no valid listen ip");
-					v.ip = ip;
-					if (!Number.isInteger(x.listen[1]) || x.listen[1] < 0) 
-						return this.err("processus." + proc + " : no valid listen ssl port");
-					v.sslport = x.listen[1];
-					if (x.listen.length == 3) {
-						if (!Number.isInteger(x.listen[2]) || x.listen[2] < 0) 
-							return this.err("processus." + proc + " : no valid listen port");
-						v.port = x.listen[2];
-					} else
-						v.port = 0;
+					v.listen = new Array(x.listen.length);
+					for(let i = 0, l = null; l = x.listen[i]; i++){
+						if (l.length < 2 || l.length > 3) 
+							return this.err("processus." + proc + " : no valid listen [" + i + "]" );
+						let ip = this.urls[l[0]];
+						if (!ip) return this.err("processus." + proc + " : no valid ip for listen [" + i + "]" );
+						if (!Number.isInteger(l[1]) || x.listen[1] < 0) 
+							return this.err("processus." + proc + " : no valid port for listen [" + i + "]" );
+						let port = l[1];
+						let opt = l.length == 2 ? 0 : l[2];
+						v.listen[i] = [ip, port, opt];
+					}
 				}
 				if (x.static && v.type == 0) v.static = true;
 				
