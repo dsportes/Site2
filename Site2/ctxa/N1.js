@@ -304,5 +304,5 @@ for(let i = 0, l = null; l = cfg.currentProcessus.listen[i]; i++) {
 }
 
 const qm = new queueManager(cfg);
-await qm.init();
-console.log("QM running");
+qm.init();
+console.log("QM started");

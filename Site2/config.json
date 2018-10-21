@@ -36,8 +36,8 @@
 			"shortcuts":{"?":"ds-index", "demo":"dsdemo-index"},
 			"homes":["index", "admin"]
 		},
-		"P1" : {"log":1, "ISDEV" : true, "DELHISTORYINDAYS" : 20, "QUEUES" : [4, 1, 1] },
-	    "N1" : {"log":1}
+		"N1" : {"log":1, "ISDEV" : true, "DELHISTORYINDAYS" : 20, "QUEUES" : [4, 1, 1], "RETRIES":[10, 60, 360, 3600, 36000, 86400] },
+	    "P1" : {"log":1}
 	},
     "apps" : {
         "asn" : {
