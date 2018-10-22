@@ -26,17 +26,26 @@
         ["lo2", "lo1", "h4", "h5"] 
     ],
     "orgs" : [
-        ["prods", "ds", "grp"], 
+        ["prods", "ds", "prod"], 
         ["demos", "dsdemo", "grpdemo"], 
         ["tests", "dstest", "grptest"] 
     ],
 	"options" : {
 		"opt1" : {"ignorePause":["base.Ping", "base.SetPause"], "maxTime":60000},
 		"optasn" : {
-			"shortcuts":{"?":"ds-index", "demo":"dsdemo-index"},
+			"shortcuts":{"?":"prod-index", "demo":"grpdemo-index"},
 			"homes":["index", "admin"]
 		},
-		"N1" : {"log":1, "ISDEV" : true, "DELHISTORYINDAYS" : 20, "QUEUES" : [4, 1, 1], "RETRIES":[10, 60, 360, 3600, 36000, 86400] },
+		"N1" : {
+			"log":1, "ISDEV" : true, 
+			"DELHISTORYINDAYS" : 20, 
+			"QUEUES" : [4, 1, 1], 
+			"RETRIES":[10, 60, 360, 3600, 36000, 86400],
+			"MAXCACHESIZE":20,
+			"sudo":{
+				"prod":["x1", "x2"]
+				}
+			},
 	    "P1" : {"log":1}
 	},
     "apps" : {

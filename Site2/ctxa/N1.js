@@ -192,7 +192,7 @@ if (cfg.error) {
 	console.log(cfg.error);
 	throw cfg.error;
 }
-let logLvl = cfg.currentProcessus.options.log;
+let logLvl = cfg.currentProcessus.GCTX.options.log;
 if (!logLvl) logLvl = 0;
 
 const filesByApp = getFilesByApp();
