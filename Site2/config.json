@@ -42,8 +42,13 @@
 			"QUEUES" : [4, 1, 1], 
 			"RETRIES":[10, 60, 360, 3600, 36000, 86400],
 			"MAXCACHESIZE":20,
+			"BACKLOGBROWSINGINSEC":3600,
+			"BACKLOGREFRESH1INMIN":3,
+			"BACKLOGREFRESH2INMIN":5,
+			"BCRYPTSALT":"$2b$12$WdYsWBPznbcWrICT2tefEO",
 			"sudo":{
-				"prod":["x1", "x2"]
+				"z":["fDXcJ4p9s3zRXZJEExrIONmtA42BemO", "PpjqWRVL08llVBWrZz84tb4oEX72kUXSQuw1VbCEvac"],
+				"prod":["PpjqWRVL08llVBWrZz84tb4oEX72kUXSQuw1VbCEvac"]
 				}
 			},
 	    "P1" : {"log":1}
@@ -61,7 +66,7 @@
         }
     },
     "databases" : {
-        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5433, 
+        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5432, 
         	"max":10, "provider":"pgdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000},
         "db2" : {"host":"lh", "database":"asocial1", "user":"asocial", 
         	"connectionLimit ":10, "provider":"mariadbdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000}
@@ -71,7 +76,7 @@
         "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1", "langs":["fr","en"] }
     },
     "processus" : {
-        "N1" : {"listen":[["h2", 8491, 1], ["h2", 8492, 2], ["h2", 8091]], "static":true,
+        "N1" : {"listen":[["h2", 8491, 1], ["h2", 8492, 2], ["lh", 8091]], "static":true,
             "services" : [
                 {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"prods"}, 
                 {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"demos"} 

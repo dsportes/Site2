@@ -62,9 +62,9 @@ function headers(mime, origin, xch) {
 }
 
 const errMsg = {
-	"BORG1":"origne de l'opération non acceptée",
-	"BORG2":"organisation gérée par un autre processus pour le service demandé",
-	"BORG3":"organisation non gérée pour le service demandé",
+	"SORIG":"origne de l'opération non acceptée",
+	"XORG":"organisation gérée par un autre processus d'URL [{0}]",
+	"SORG":"organisation non gérée pour le service demandé",
 	"BMIN":"Build supportée par l'application [{0}] pour ce service absente du X-Custom-Header ou de niveau insuffisant, [{1}] requis au minimum"
 }
 
@@ -96,13 +96,13 @@ async function oper(req, res) {
 				res.status(200).set(headers(result.mime, origin, execCtx ? execCtx.respXCH : null)).send(result.bytes);
 			} else {
 				// Build min dans XCH non respectée ou pas de XCH
-				let err = {err:"BBM", info:errMsg["BBM"], args:[buildmin, s.buildmin ? s.buildmin : 0], phase:0};
+				let err = {err:"BMIN", info:errMsg["BMIN"], args:[buildmin, s.buildmin ? s.buildmin : 0], phase:0};
 				res.status(200).set(headers("text/javascript", origin)).send(JSON.stringify(err));				
 			}
 		} else {
 			// 1:origine 2:org supportée par autre process 3:org non supportée
-			let c = "BORG"  + e; 
-			let err = {err:c, info:errMsg[c], args:buildOrUrl, phase:0};
+			let c = ["" ,"SORIG", "XORG", "SORG"][e]; 
+			let err = {err:c, info:errMsg[c], args:[s], phase:0};
 			res.status(200).set(headers(cfg.mimeOf("js"), origin)).send(JSON.stringify(err));
 		}
 	} catch(e) {
@@ -113,7 +113,7 @@ async function oper(req, res) {
 		} else {
 			let stack = e.stack ? e.stack : "";
 			let msg = e.message ? e.message : "?";
-			err = {err:"BU3", info:msg, args:[]};
+			err = {err:"BUG", info:msg, args:[]};
 			if (stack) err.tb = stack;
 			if (logLvl > 0) console.log(msg + (stack ? "\n" + stack : ""));
 		}
@@ -179,14 +179,14 @@ const upload = multer({ storage: storage });
 const Config = require("./config.js").Config;
 const HomePage = require("../homePage.js").HomePage;
 
-const key = fs.readFileSync(rootDir + "/cert/privkey.pem");
-const cert = fs.readFileSync(rootDir + "/cert/fullchain.pem");
-const secretsjson = fs.readFileSync(rootDir + "/cert/secrets.json");
-const favicon = fs.readFileSync(rootDir + "/favicon.ico");
-const swjs = fs.readFileSync(rootDir + "/sw.js");
-const homepagejs = fs.readFileSync(rootDir + "/homePage.js");
+const key = fs.readFileSync(rootDir + "cert/privkey.pem");
+const cert = fs.readFileSync(rootDir + "cert/fullchain.pem");
+const secretsjson = fs.readFileSync(rootDir + "cert/secrets.json");
+const favicon = fs.readFileSync(rootDir + "favicon.ico");
+const swjs = fs.readFileSync(rootDir + "sw.js");
+const homepagejs = fs.readFileSync(rootDir + "homePage.js");
 
-const configjson = fs.readFileSync(rootDir + "/config.json");
+const configjson = fs.readFileSync(rootDir + "config.json");
 const cfg = new Config().setup(configjson, secretsjson, processusName, rootDir);
 if (cfg.error) {
 	console.log(cfg.error);

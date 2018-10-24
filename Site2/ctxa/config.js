@@ -232,6 +232,8 @@ class Config {
 						let port = l[1];
 						let opt = l.length == 2 ? 0 : l[2];
 						v.listen[i] = [ip, port, opt];
+						if (!i)
+							x.stdUrl = (opt ? "https://" : "http://") + ip + ":" + port;
 					}
 				}
 				if (x.static && v.type == 0) v.static = true;
@@ -302,13 +304,8 @@ class Config {
 		}
 		for(let proc in this.processus) {
 			let p = this.processus[proc];
-			for(let i = 0, s = null; s = p.services[i]; i++) {
-				if (s.orgs[org]) {
-					let url = p.sslport ? "https://" + p.ip + ":" + p.sslport + "/" 
-						: "http://" + p.ip + ":" + p.port + "/";
-					return [2, url]
-				}
-			}
+			for(let i = 0, s = null; s = p.services[i]; i++)
+				if (s.orgs[org]) return [2,  p.stdUrl]
 		}
 		return [3, ""];
 	}
