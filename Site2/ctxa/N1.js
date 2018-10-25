@@ -97,13 +97,13 @@ async function oper(req, res) {
 			} else {
 				// Build min dans XCH non respectée ou pas de XCH
 				let err = {err:"BMIN", info:errMsg["BMIN"], args:[buildmin, s.buildmin ? s.buildmin : 0], phase:0};
-				res.status(200).set(headers("text/javascript", origin)).send(JSON.stringify(err));				
+				res.status(200).set(headers("application/json", origin)).send(JSON.stringify(err));				
 			}
 		} else {
 			// 1:origine 2:org supportée par autre process 3:org non supportée
 			let c = ["" ,"SORIG", "XORG", "SORG"][e]; 
 			let err = {err:c, info:errMsg[c], args:[s], phase:0};
-			res.status(200).set(headers(cfg.mimeOf("js"), origin)).send(JSON.stringify(err));
+			res.status(200).set(headers("application/json", origin)).send(JSON.stringify(err));
 		}
 	} catch(e) {
 		let err;

@@ -16,13 +16,13 @@
       "h1b" : "192.168.1.10",
       "h2" : "test.sportes.fr",
       "h3" : "127.0.0.1:8000",
-      "h4" : "127.0.0.1:8081",
+      "h4" : "http://127.0.0.1:8081",
       "h5" : "127.0.0.1:80",     
-      "n1a" : "127.0.0.1:8091",     
-      "n1b" : "127.0.0.1:8092"      
+      "n1a" : "https://test.sportes.fr:8491",     
+      "n1b" : "https://test.sportes.fr:8092"      
     },
     "origins" : [
-        ["lo1", "h1", "h2", "h3"], 
+        ["lo1", "h1", "h2", "h3", "h4"], 
         ["lo2", "lo1", "h4", "h5"] 
     ],
     "orgs" : [
@@ -76,7 +76,7 @@
         "svp1": {"builds":[100], "buildsmin":[100], "builddir":"", "options":"opt1", "langs":["fr","en"] }
     },
     "processus" : {
-        "N1" : {"listen":[["h2", 8491, 1], ["h2", 8492, 2], ["lh", 8091]], "static":true,
+        "N1" : {"listen":[["h2", 8491, 1], ["h2", 8591, 2], ["lh", 8091]], "static":true,
             "services" : [
                 {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"prods"}, 
                 {"svc":"svn1", "build":0, "db":"db1", "origins":"lo1", "orgs":"demos"} 

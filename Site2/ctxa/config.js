@@ -27,14 +27,21 @@ class Config {
 				for(let j = 1; j < x.length; j++){
 					let t = x[j];
 					if (!t) continue;
+					let todel = false;
+					if (t.startsWith("-")) {
+						t = t.substring(1);
+						todel = true;
+					}
 					let lx = this.origins[t];
 					if (lx)
 						for(let vx in lx) v.add(vx);
 					else {
-						if (t.startsWith("-"))
-							v.delete(t.substring(1));
+						let u = this.urls[t];
+						if (!u) return this.err("origins : entry " + n + "; url???:" + t);
+						if (todel)
+							v.delete(u);
 						else
-							v.add(t);
+							v.add(u);
 					}
 				}
 			}
@@ -149,6 +156,7 @@ class Config {
 						orgs.add(org);
 						it2.orgs[org] = true;
 					}
+					let origins = x.origins;
 				}
 			}
 		
@@ -262,7 +270,7 @@ class Config {
 					if (!it1.origins) return this.err("processus." + proc + " : no origins for item " + i);
 					let orig = this.origins[it1.origins];
 					if (!orig) return this.err("processus." + proc + " : no valid origins for item " + i);
-					v.origins = orig;
+					it2.origins = orig;
 					if (!it1.orgs) ("processus." + proc + " : no orgs for item " + i);
 					let og = this.orgs[it1.orgs];
 					if (!og) return this.err("process." + proc + " : no orgs for item " + i);
@@ -300,7 +308,7 @@ class Config {
 	buildOfSvcForOrg(svc, org, origin){
 		for(let k = 0, s = null; s = this.currentProcessus.services[k]; k++) {
 			if (!s.orgs.has(org)) continue;
-			return (this.currentProcessus.GCTX.options.ISDEV && origin == "null") || s.orgs.has(origin) ? [0, s] : [1, ""];
+			return (this.currentProcessus.GCTX.options.ISDEV && origin == "null") || s.origins.has(origin) ? [0, s] : [1, ""];
 		}
 		for(let proc in this.processus) {
 			let p = this.processus[proc];
