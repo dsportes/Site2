@@ -22,7 +22,7 @@
       "n1b" : "https://test.sportes.fr:8092"      
     },
     "origins" : [
-        ["lo1", "h1", "h2", "h3", "h4"], 
+        ["lo1", "h1", "h2", "h3"], 
         ["lo2", "lo1", "h4", "h5"] 
     ],
     "orgs" : [
@@ -47,8 +47,8 @@
 			"BACKLOGREFRESH2INMIN":5,
 			"BCRYPTSALT":"$2b$12$WdYsWBPznbcWrICT2tefEO",
 			"sudo":{
-				"z":["fDXcJ4p9s3zRXZJEExrIONmtA42BemO", "PpjqWRVL08llVBWrZz84tb4oEX72kUXSQuw1VbCEvac"],
-				"prod":["PpjqWRVL08llVBWrZz84tb4oEX72kUXSQuw1VbCEvac"]
+				"z":["fDXcJ4p9s3zRXZJEExrIONmtA42BemO", "RRrVJPYS0EDnva1VxjAWRZUaAkU2SfywDzJtiFCkD8g"],
+				"prod":["RRrVJPYS0EDnva1VxjAWRZUaAkU2SfywDzJtiFCkD8g"]
 				}
 			},
 	    "P1" : {"log":1}
