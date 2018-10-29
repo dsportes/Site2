@@ -22,7 +22,7 @@
       "n1b" : "https://test.sportes.fr:8092"      
     },
     "origins" : [
-        ["lo1", "h1", "h2", "h3"], 
+        ["lo1", "h1", "h2", "h3", "h4"], 
         ["lo2", "lo1", "h4", "h5"] 
     ],
     "orgs" : [
@@ -66,7 +66,7 @@
         }
     },
     "databases" : {
-        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5432, 
+        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5433, 
         	"max":10, "provider":"pgdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000},
         "db2" : {"host":"lh", "database":"asocial1", "user":"asocial", 
         	"connectionLimit ":10, "provider":"mariadbdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000}
