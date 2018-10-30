@@ -55,6 +55,8 @@ function headers(mime, origin, xch) {
     if (origin && origin != "null") {
         h['Access-Control-Allow-Origin'] = origin;
         h['Access-Control-Allow-Headers'] = 'X-Custom-Header';
+		h['Access-Control-Expose-Headers'] = 'X-Custom-Header';
+
     }
     if (xch)
         h['X-Custom-Header'] = JSON.stringify(xch);
