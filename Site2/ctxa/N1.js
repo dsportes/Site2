@@ -76,6 +76,14 @@ async function oper(req, res) {
 	let certDN = getCertDN(req);
 	try {
 		origin = req.headers["origin"];
+		if (!origin) {
+			let referer = req.headers["referer"];
+			if (referer) {
+				let i = referer.indexOf("/", 10);
+				if (i != -1)
+					origin = referer.substring(0, i);
+			}
+		}
 		if (req.method == "OPTIONS") {
 			res.status(200).set(headers(cfg.mimeOf("txt"), origin)).send("");
 			return;
