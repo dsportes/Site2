@@ -225,7 +225,7 @@ app.use("/favicon.ico", (req, res) => {
 /**** ping du site ****/
 app.use("/ping", (req, res) => {
 	try {
-		res.status(200).set("Content-type",  cfg.mimeOf("js") + "; charset=utf-8").send(new Date().toISOString());
+		res.status(200).set("Content-type",  cfg.mimeOf("txt") + "; charset=utf-8").send(new Date().toISOString());
 	} catch(e) { 
 		res.status(404).send(e.message);
 	}

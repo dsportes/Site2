@@ -37,7 +37,8 @@
 			"homes":["index", "admin"]
 		},
 		"N1" : {
-			"log":1, "ISDEV" : true, 
+			"log":1, 
+			"ISDEV" : true, 
 			"DELHISTORYINDAYS" : 20, 
 			"QUEUES" : [4, 1, 1], 
 			"RETRIES":[10, 60, 360, 3600, 36000, 86400],
