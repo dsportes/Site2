@@ -31,7 +31,11 @@
         ["tests", "dstest", "grptest"] 
     ],
 	"options" : {
-		"opt1" : {"ignorePause":["base.Ping", "base.SetPause"], "maxTime":60000},
+		"opt1" : {"ignorePause":["base.Ping", "base.SetPause"], "maxTime":60000,
+				"nbjadmin":100, "nbjstd":4, "defmxm":5,
+				"coeffs":[0.014, 0.12, 0.06, 0.18, 0.006, 0.0006],
+				"forfaits":{"base":[0.01, 0.2, 2], "mini":[0.005, 0.1, 0.5], "maxi":[0.02, 0.5, 5]}
+		},
 		"optasn" : {
 			"shortcuts":{"?":"prod-index", "demo":"grpdemo-index"},
 			"homes":["index", "admin"]
