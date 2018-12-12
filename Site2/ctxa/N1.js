@@ -127,7 +127,7 @@ async function oper(req, res) {
 			if (stack) err.tb = stack;
 			if (logLvl > 0) console.log(msg + (stack ? "\n" + stack : ""));
 		}
-		err.phase = execCtx ? execCtx.phase : 0;
+		err.phase = execCtx ? execCtx.phase : 1;
 		let txt = JSON.stringify(err);
 		res.status(200).set(headers("json", origin, execCtx ? execCtx.respXCH : null)).send(txt);
 	}
