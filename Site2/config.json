@@ -71,7 +71,7 @@
         }
     },
     "databases" : {
-        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5433, 
+        "db1" : {"host":"lh", "database":"asocial1", "user":"asocial", "port":5432, 
         	"max":10, "provider":"pgdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000},
         "db2" : {"host":"lh", "database":"asocial1", "user":"asocial", 
         	"connectionLimit ":10, "provider":"mariadbdb", "MAXCACHESIZE":50000000, "LAPSEREFRESHONOFF":300000}
