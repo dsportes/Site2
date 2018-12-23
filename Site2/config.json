@@ -52,8 +52,8 @@
 			"BACKLOGREFRESH2INMIN":5,
 			"BCRYPTSALT":"$2b$12$WdYsWBPznbcWrICT2tefEO",
 			"sudo":{
-				"z":{"fDXcJ4p9s3zRXZJEExrIONmtA42BemO":[1,2], "RRrVJPYS0EDnva1VxjAWRZUaAkU2SfywDzJtiFCkD8g":[1,2]},
-				"prod": {"fDXcJ4p9s3zRXZJEExrIONmtA42BemO":[1,3], "RRrVJPYS0EDnva1VxjAWRZUaAkU2SfywDzJtiFCkD8g":[1,3]}
+				"z":{"fDXcJ4p9s3zRXZJEExrIONmtA42BemO":[1,2], "n0_VA4ix8Cbq3Z-Qzaqd0PRu0gK1TNFR6hqS62gNsv8":[1,2]},
+				"prod": {"fDXcJ4p9s3zRXZJEExrIONmtA42BemO":[1,3], "n0_VA4ix8Cbq3Z-Qzaqd0PRu0gK1TNFR6hqS62gNsv8":[1,3]}
 				}
 			},
 	    "P1" : {"log":1}
